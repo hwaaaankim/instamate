@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<th:block th:replace="fragments/administration/common :: header('메인')"></th:block>
+</head>
+
+<body>
+	<section id="container">
+		<th:block th:replace="fragments/administration/common :: side(${session['name']})"></th:block>
+		<section id="main-content">
+			<section class="wrapper">
+				<div class="row mt">
+					<div class="col-lg-12">
+						<div class="form-panel">
+							<h4 class="mb"><i class="fa fa-angle-right"></i> 기본사항</h4>
+							<form class="form-horizontal style-form" method="get">
+								<div class="form-group">
+									<label class="col-sm-2 col-sm-2 control-label">타이틀</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" id="title" th:value="${title}"
+											placeholder="타이틀을 입력 해 주세요.">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 col-sm-2 control-label">태그</label>
+									<div class="col-sm-10">
+										<select class="form-control" id="tag">
+											<option value="tag01" th:selected="${tag == 'tag01'}">태그 01</option>
+											<option value="tag02" th:selected="${tag == 'tag02'}">태그 02</option>
+											<option value="tag03" th:selected="${tag == 'tag03'}">태그 03</option>
+											<option value="tag04" th:selected="${tag == 'tag04'}">태그 04</option>
+											<option value="tag05" th:selected="${tag == 'tag05'}">태그 05</option>
+										</select>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="form-panel">
+					<div id="editor">
+						<p>여기에 텍스트와 이미지를 추가하세요.</p>
+					</div>
+					<button type="button" id="updateButton" class="btn btn-theme" style="margin-top:10px;">수정하기</button>
+				</div>
+			</section>
+		</section>
+	</section>
+	<th:block th:replace="fragments/administration/common :: script"></th:block>
+
+	<script type="importmap">
+        {
+            "imports": {
+                "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.0/ckeditor5.js",
+                "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.0/"
+            }
+        }
+    </script>
+
+	<!-- JavaScript 내에서 Thymeleaf 변수를 사용할 수 있도록 설정 -->
+	<script th:inline="javascript">
+		// Thymeleaf 변수를 JavaScript로 전달
+		const initialContent = /*[[${content}]]*/ '';
+		const blogId = /*[[${id}]]*/ '';
+	</script>
+
+	<script type="module">
+		import {
+			ClassicEditor,
+			Essentials,
+			Paragraph,
+			Bold,
+			Italic,
+			Font,
+			Image,
+			ImageToolbar,
+			ImageUpload,
+			ImageCaption,
+			ImageStyle,
+			ImageInsert,
+			ImageResizeEditing,
+			ImageResizeHandles,
+			ImageResizeButtons,
+			DragDrop,
+			Alignment,
+			Table,
+			TableToolbar
+		} from 'ckeditor5';
+
+		// 이미지 업로드 어댑터 정의
+		class CustomUploadAdapter {
+			constructor(loader) {
+				this.loader = loader;
+			}
+
+			upload() {
+				return this.loader.file
+					.then(file => new Promise((resolve, reject) => {
+						const reader = new FileReader();
+						reader.onload = () => {
+							resolve({default: reader.result});
+						};
+						reader.onerror = error => reject(error);
+						reader.readAsDataURL(file);
+					}));
+			}
+
+			abort() { }
+		}
+
+		function CustomUploadAdapterPlugin(editor) {
+			editor.plugins.get('FileRepository').createUploadAdapter = loader => {
+				return new CustomUploadAdapter(loader);
+			};
+		}
+
+		let editorInstance;
+
+		ClassicEditor
+			.create(document.querySelector('#editor'), {
+				plugins: [
+					Essentials, Paragraph, Bold, Italic, Font, Image, ImageToolbar,
+					ImageUpload, ImageCaption, ImageStyle, ImageResizeEditing,
+					ImageResizeHandles, ImageResizeButtons, ImageInsert, DragDrop,
+					Alignment, Table, TableToolbar
+				],
+				toolbar: [
+					'undo', 'redo', '|', 'bold', 'italic', '|',
+					'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+					'insertImage', 'insertTable', '|', 'alignment:left', 'alignment:center', 'alignment:right', '|',
+					'imageTextAlternative', 'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight', '|',
+					'mergeTableCells'
+				],
+				image: {
+					toolbar: [
+						'imageTextAlternative', 'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight'
+					],
+					styles: {
+						options: ['alignLeft', 'alignCenter', 'alignRight', 'full']
+					}
+				},
+				alignment: {
+					options: ['left', 'center', 'right']
+				},
+				table: {
+					contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+				},
+				extraPlugins: [CustomUploadAdapterPlugin]
+			})
+			.then(editor => {
+				editorInstance = editor;
+				// 에디터에 초기 데이터 로드
+				editorInstance.setData(initialContent);
+			})
+			.catch(error => {
+				console.error(error);
+			});
+
+		async function uploadImage(imageBase64) {
+			const response = await fetch('/admin/blog/image/upload', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({image: imageBase64})
+			});
+			const data = await response.json();
+			return data.filePath;
+		}
+
+		document.getElementById('updateButton').addEventListener('click', async () => {
+			const title = document.getElementById('title').value.trim();
+			const tagSelect = document.getElementById('tag');
+			const tag = tagSelect.options[tagSelect.selectedIndex].value;
+
+			if (!title) {
+				alert('타이틀을 입력하세요.');
+				return;
+			}
+
+			if (!tag) {
+				alert('태그를 선택하세요.');
+				return;
+			}
+
+			let editorData = editorInstance.getData();
+			const imgRegex = /<img[^>]+src="([^">]+)"/g;
+			const imagePromises = [];
+
+			// 기존 이미지 삭제를 위한 API 호출
+			await fetch(`/admin/blog/delete-images/${blogId}`, {method: 'DELETE'})
+				.then(response => {
+					if (!response.ok) throw new Error('기존 이미지 삭제 실패');
+				})
+				.catch(error => console.error(error));
+
+			// 새로 등록된 이미지 서버로 업로드
+			editorData = editorData.replace(imgRegex, (match, src) => {
+				if (src.startsWith('data:image')) {
+					imagePromises.push(uploadImage(src).then(filePath => {
+						editorData = editorData.replace(src, filePath);
+					}));
+				}
+				return match;
+			});
+
+			await Promise.all(imagePromises);
+
+			// 수정된 컨텐츠 업데이트
+			fetch(`/admin/blog/update/${blogId}`, {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({title, tag, content: editorData})
+			})
+				.then(response => {
+					if (response.ok) {
+						alert('수정이 완료되었습니다.');
+					} else {
+						alert('수정에 실패했습니다.');
+					}
+				})
+				.catch(error => {
+					console.error('수정 오류:', error);
+					alert('수정 중 문제가 발생했습니다.');
+				});
+		});
+
+	</script>
+</body>
+
+</html>

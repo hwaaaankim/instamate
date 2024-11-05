@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/front/common :: mateHead"></head>
+
+<body class="stretched">
+	<div id="wrapper">
+		<header th:replace="fragments/front/common :: mateHeader('blog')"></header>
+
+		<section id="content">
+			<div class="content-wrap">
+				<div class="container">
+
+					<div class="single-post mb-0">
+						<div class="entry">
+							<div class="entry-title">
+								<h2 th:text="${content.title}"></h2>
+							</div>
+
+							<div class="entry-meta">
+								<ul>
+									<li><i class="uil uil-schedule"></i> [[${content.date}]]</li>
+									<li><a href="#"><i class="uil uil-user"></i> [[${content.author}]]</a></li>
+									<li><i class="uil uil-folder-open"></i> <a href="#"># [[${content.tag}]]</a></li>
+									<li><a href="#"><i class="uil uil-camera"></i>[[${content.clicks}]]CLICKS</a></li>
+								</ul>
+							</div>
+							<div class="entry-content mt-0">
+								<p id="content-area" th:utext="${content.content}" class="content"></p>
+
+								<div class="clear"></div>
+							</div>
+						</div>
+
+						<div class="row text-center text-md-start justify-content-between my-5">
+							<div class="col-md-auto">
+								<a href="#" class="d-inline-flex align-items-center text-dark h-text-color"><i
+										class="uil uil-angle-left-b fs-3 me-1"></i><span>PREV</span></a>
+							</div>
+							<div class="col-md-auto">
+								<a href="#" class="d-inline-flex align-items-center text-dark h-text-color"><span>NEXT</span><i class="uil uil-angle-right-b fs-3 ms-1"></i></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<footer th:replace="fragments/front/common :: mateFooter"></footer>
+	</div>
+	<div th:replace="fragments/front/common :: mateBtn"></div>
+	<th:block th:replace="fragments/front/common :: mateScript"></th:block>
+</body>
+
+</html>

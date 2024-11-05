@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/front/common :: mateHead"></head>
+
+<body class="stretched">
+	<div id="wrapper">
+		<header th:replace="fragments/front/common :: mateHeader('blog')"></header>
+		<section class="bg-transparent">
+			<div class="container">
+				<div class="container">
+					<div class="row">
+						
+						<div class="col-md-4 form-group">
+							<label for="template-contactform-service">SIZE</label>
+							<select id="template-contactform-service" name="template-contactform-service"
+								class="form-select">
+								<option value="">-- 10개씩보기 --</option>
+								<option value="#">-- 20개씩보기 --</option>
+								<option value="#">-- 30개씩보기 --</option>
+								<option value="#">-- 50개씩보기 --</option>
+							</select>
+						</div>
+						<div class="col-md-4 form-group">
+							<label>SUBJECT</label>
+							<select name="template-contactform-service" class="form-select">
+								<option value="">-- 모두보기 --</option>
+								<option value="#">SUBJECT</option>
+								<option value="#">SUBJECT</option>
+								<option value="#">SUBJECT</option>
+								<option value="#">SUBJECT</option>
+							</select>
+						</div>
+						<div class="col-md-4 form-group">
+							<label>KEYWORD</label>
+							<input type="text" name="subject" class="required form-control" placeholder="검색어를 입력 해 주세요.">
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section id="content">
+			<div class="content-wrap">
+				<div class="container">
+
+					<div id="posts" class="row grid-container gutter-40">
+						<div class="blog-entry entry col-12">
+							<div class="grid-inner row g-0">
+								<div class="col-md-4">
+									<div class="entry-image">
+										<a href="/blogDetail" data-lightbox="image"><img width="auto;" height="100%;"
+												src="/front/image/product/web/p2.png"></a>
+									</div>
+								</div>
+								<div class="col-md-8 ps-md-4">
+									<div class="entry-title title-sm">
+										<h2><a href="/blogDetail">BLOG TITLE SECTION</a>
+										</h2>
+									</div>
+									<div class="entry-meta">
+										<ul>
+											<li><i class="uil uil-schedule"></i> 00.00.00 00:00:00</li>
+											<li><a href="#"><i class="uil uil-user"></i> INSTA MATE</a></li>
+											<li><i class="uil uil-folder-open"></i> <a href="#"># PRICE</a>, <a
+													href="#"># SOMETHING</a></li>
+											<li><a href="#"><i class="uil uil-camera"></i>
+													13 CLICKS</a></li>
+										</ul>
+									</div>
+									<div class="entry-content">
+										<p>CONTENT SECTION[......]</p>
+										<a href="/blogDetail" class="more-link">READ MORE</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="blog-entry entry col-12">
+							<div class="grid-inner row g-0">
+								<div class="col-md-4">
+									<div class="entry-image">
+										<a href="#" data-lightbox="image"><img width="auto;" height="100%;"
+												src="/front/image/product/web/p2.png"></a>
+									</div>
+								</div>
+								<div class="col-md-8 ps-md-4">
+									<div class="entry-title title-sm">
+										<h2><a href="#">BLOG TITLE SECTION</a>
+										</h2>
+									</div>
+									<div class="entry-meta">
+										<ul>
+											<li><i class="uil uil-schedule"></i> 00.00.00 00:00:00</li>
+											<li><a href="#"><i class="uil uil-user"></i> INSTA MATE</a></li>
+											<li><i class="uil uil-folder-open"></i> <a href="#"># PRICE</a>, <a
+													href="#"># SOMETHING</a></li>
+											<li><a href="blog-single.html#comments"><i class="uil uil-camera"></i>
+													13 CLICKS</a></li>
+										</ul>
+									</div>
+									<div class="entry-content">
+										<p>CONTENT SECTION[......]</p>
+										<a href="#" class="more-link">READ MORE</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="blog-entry entry col-12">
+							<div class="grid-inner row g-0">
+								<div class="col-md-4">
+									<div class="entry-image">
+										<a href="#" data-lightbox="image"><img width="auto;" height="100%;"
+												src="/front/image/product/web/p2.png"></a>
+									</div>
+								</div>
+								<div class="col-md-8 ps-md-4">
+									<div class="entry-title title-sm">
+										<h2><a href="#">BLOG TITLE SECTION</a>
+										</h2>
+									</div>
+									<div class="entry-meta">
+										<ul>
+											<li><i class="uil uil-schedule"></i> 00.00.00 00:00:00</li>
+											<li><a href="#"><i class="uil uil-user"></i> INSTA MATE</a></li>
+											<li><i class="uil uil-folder-open"></i> <a href="#"># PRICE</a>, <a
+													href="#"># SOMETHING</a></li>
+											<li><a href="blog-single.html#comments"><i class="uil uil-camera"></i>
+													13 CLICKS</a></li>
+										</ul>
+									</div>
+									<div class="entry-content">
+										<p>CONTENT SECTION[......]</p>
+										<a href="#" class="more-link">READ MORE</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="blog-entry entry col-12">
+							<div class="grid-inner row g-0">
+								<div class="col-md-4">
+									<div class="entry-image">
+										<a href="#" data-lightbox="image"><img width="auto;" height="100%;"
+												src="/front/image/product/web/p2.png"></a>
+									</div>
+								</div>
+								<div class="col-md-8 ps-md-4">
+									<div class="entry-title title-sm">
+										<h2><a href="#">BLOG TITLE SECTION</a>
+										</h2>
+									</div>
+									<div class="entry-meta">
+										<ul>
+											<li><i class="uil uil-schedule"></i> 00.00.00 00:00:00</li>
+											<li><a href="#"><i class="uil uil-user"></i> INSTA MATE</a></li>
+											<li><i class="uil uil-folder-open"></i> <a href="#"># PRICE</a>, <a
+													href="#"># SOMETHING</a></li>
+											<li><a href="blog-single.html#comments"><i class="uil uil-camera"></i>
+													13 CLICKS</a></li>
+										</ul>
+									</div>
+									<div class="entry-content">
+										<p>CONTENT SECTION[......]</p>
+										<a href="#" class="more-link">READ MORE</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="blog-entry entry col-12">
+							<div class="grid-inner row g-0">
+								<div class="col-md-4">
+									<div class="entry-image">
+										<a href="#" data-lightbox="image"><img width="auto;" height="100%;"
+												src="/front/image/product/web/p2.png"></a>
+									</div>
+								</div>
+								<div class="col-md-8 ps-md-4">
+									<div class="entry-title title-sm">
+										<h2><a href="#">BLOG TITLE SECTION</a>
+										</h2>
+									</div>
+									<div class="entry-meta">
+										<ul>
+											<li><i class="uil uil-schedule"></i> 00.00.00 00:00:00</li>
+											<li><a href="#"><i class="uil uil-user"></i> INSTA MATE</a></li>
+											<li><i class="uil uil-folder-open"></i> <a href="#"># PRICE</a>, <a
+													href="#"># SOMETHING</a></li>
+											<li><a href="blog-single.html#comments"><i class="uil uil-camera"></i>
+													13 CLICKS</a></li>
+										</ul>
+									</div>
+									<div class="entry-content">
+										<p>CONTENT SECTION[......]</p>
+										<a href="#" class="more-link">READ MORE</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex justify-content-between mt-5">
+						<a href="#" class="btn btn-outline-secondary">&larr; PREV</a>
+						<a href="#" class="btn btn-outline-dark">NEXT &rarr;</a>
+					</div>
+				</div>
+			</div>
+		</section>
+		<footer th:replace="fragments/front/common :: mateFooter"></footer>
+	</div>
+	<div th:replace="fragments/front/common :: mateBtn"></div>
+	<th:block th:replace="fragments/front/common :: mateScript"></th:block>
+</body>
+
+</html>

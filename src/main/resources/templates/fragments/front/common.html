@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="mateHead">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta http-equiv="x-ua-compatible" content="IE=edge">
+	<meta name="author" content="#">
+	<meta name="description" content="#">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@400;700&family=Merriweather&display=swap"
+		rel="stylesheet">
+
+	<link rel="stylesheet" href="/front/style.css">
+	<link rel="stylesheet" href="/front/swiper-bundle.min.css">
+	<link rel="stylesheet" href="/front/css/font-icons.css">
+	<link rel="stylesheet" href="/front/one-page/css/et-line.css">
+	<link rel="stylesheet" href="/front/css/components/bs-switches.css">
+	<link rel="stylesheet" href="/front/demos/app-landing/app-landing.css">
+
+	<link rel="stylesheet" href="/front/css/custom.css">
+	<link rel="stylesheet" href="/front/add.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+	<title>INSTAMATE</title>
+</head>
+
+<header th:fragment="mateHeader(page)" th:classappend="${page != 'blog' ? 'dark' : ''}" id="header"
+	class="transparent-header" data-sticky-class="not-dark" data-responsive-class="not-dark"
+	data-sticky-logo-height="80" data-sticky-menu-padding="29">
+	<div id="header-wrap">
+		<div class="container">
+			<div class="header-row justify-content-lg-between">
+				<div id="logo" class="col-auto order-lg-2 me-lg-0 px-0">
+					<a href="/index">
+						<img class="logo-default" style="width:150px;height:auto;"
+							srcset="/front/image/logo-black.png, /front/image/logo-black.png"
+							src="/front/image/logo-black.png" alt="LOGO">
+						<img class="logo-dark" style="width:150px;height:auto;"
+							srcset="/front/image/logo-white.png, /front/image/logo-white.png"
+							src="/front/image/logo-white.png" alt="LOGO">
+					</a>
+				</div>
+
+				<div class="primary-menu-trigger">
+					<button class="cnvs-hamburger" type="button" title="Open Mobile Menu">
+						<span class="cnvs-hamburger-box"><span class="cnvs-hamburger-inner"></span></span>
+					</button>
+				</div>
+
+				<nav class="primary-menu with-arrows col-lg-5 order-lg-1 px-0">
+
+					<ul class="menu-container one-page-menu" data-easing="easeInOutExpo" data-speed="1250"
+						data-offset="160">
+						<li class="menu-item"><a class="menu-link" href="#" data-href="#slider">
+								<div>HOME</div>
+							</a>
+						</li>
+						<li class="menu-item"><a class="menu-link" href="#" data-href="#about">
+								<div>INSTAMATE</div>
+							</a>
+						</li>
+						<li class="menu-item"><a class="menu-link" href="#" data-href="#client">
+								<div>実際の事例</div>
+							</a>
+						</li>
+					</ul>
+				</nav>
+
+				<nav class="primary-menu col-lg-5 order-lg-3 px-0">
+					<ul class="menu-container justify-content-lg-end one-page-menu" data-easing="easeInOutExpo"
+						data-speed="1250" data-offset="160">
+						<li class="menu-item"><a class="menu-link" href="#" data-href="#service">
+								<div>サービス紹介</div>
+							</a>
+						</li>
+						<li class="menu-item"><a class="menu-link" href="#" data-href="#pc-product">
+								<div>マーケティング商品</div>
+							</a>
+						</li>
+						<li class="menu-item"><a class="menu-link" href="#" data-href="#contact">
+								<div>お問い合わせ</div>
+							</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+	<div class="header-wrap-clone"></div>
+</header>
+<footer id="footer" th:fragment="mateFooter">
+	<div id="copyrights">
+		<div class="container">
+			<div class="row col-mb-30">
+				<div class="col-md-12 text-center text-md-start">
+					Copyrights &copy; 2024 All Rights Reserved by INSTAMATE.<br>
+					会社名：株式会社Qlix | 代表取締役：熊谷　忠 | <i class="bi-envelope"></i> : admin@instamate.jp
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+<div class="btn-wrap" th:fragment="mateBtn">
+	<a class="question-wrap" href="/blogList">
+		<p>BLOG</p>
+		<img class="question question-wrap" src="https://hidden3661.cafe24.com/tomo/question.webp">
+	</a>
+	<a class="signup-wrap" href="#">
+		<p>プロポーザル</p>
+		<img class="signup" src="https://hidden3661.cafe24.com/tomo/signup.webp">
+	</a>
+	<a class="line-wrap" target="_blank" href="https://lin.ee/6782kUC">
+		<p>1:1お問い合わせ</p>
+		<img class="line" src="https://hidden3661.cafe24.com/tomo/line.png">
+	</a>
+</div>
+<th:block th:fragment="mateScript">
+	<script src="/front/js/jquery.js"></script>
+	<script src="/front/js/functions.js"></script>
+	<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+	<script>AOS.init();</script>
+	<script>
+		jQuery(document).ready(function () {
+			var $faqItems = jQuery('#faqs .faq');
+			if (window.location.hash != '') {
+				var getFaqFilterHash = window.location.hash;
+				var hashFaqFilter = getFaqFilterHash.split('#');
+				if ($faqItems.hasClass(hashFaqFilter[1])) {
+					jQuery('.grid-filter li').removeClass('activeFilter');
+					jQuery('[data-filter=".' + hashFaqFilter[1] + '"]').parent('li').addClass('activeFilter');
+					var hashFaqSelector = '.' + hashFaqFilter[1];
+					$faqItems.css('display', 'none');
+					if (hashFaqSelector != 'all') {
+						jQuery(hashFaqSelector).fadeIn(500);
+					} else {
+						$faqItems.fadeIn(500);
+					}
+				}
+			}
+
+			jQuery('.grid-filter a').on('click', function () {
+				jQuery('.grid-filter li').removeClass('activeFilter');
+				jQuery(this).parent('li').addClass('activeFilter');
+				var faqSelector = jQuery(this).attr('data-filter');
+				$faqItems.css('display', 'none');
+				if (faqSelector != 'all') {
+					jQuery(faqSelector).fadeIn(500);
+				} else {
+					$faqItems.fadeIn(500);
+				}
+				return false;
+			});
+		});
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+	<script>
+		document.querySelectorAll('.page-over').forEach(function (pageOverElement) {
+			pageOverElement.addEventListener('click', function () {
+				anime({
+					targets: this, // 클릭된 요소 자체에 애니메이션 적용
+					translateY: {
+						value: -300, // Y축 이동
+						duration: 1000, // 1초 동안 이동
+						easing: 'easeInOutQuad'
+					},
+					opacity: {
+						value: 0, // 서서히 사라짐
+						duration: 500, // 0.5초 동안 사라짐
+						easing: 'easeInOutQuad',
+						delay: 500 // 0.5초 후에 opacity 애니메이션 시작
+					}
+				});
+				this.style.animation = 'none';
+			});
+		});
+
+	</script>
+	<script src="/front/jquery-3.7.1.min.js"></script>
+	<script src="/front/swiper-bundle.min.js"></script>
+	<script src="/front/main.js"></script>
+	<script>
+		$(document).ready(function () {
+			var swiper = new Swiper(".mySwiper", {
+				slidesPerView: 1.4,
+				spaceBetween: 15,
+				loop: true,
+				scrollbar: {
+					el: ".swiper-scrollbar"
+				},
+				navigation: {
+					nextEl: ".swiper-button-next",
+					prevEl: ".swiper-button-prev",
+				},
+				breakpoints: {
+					360: {
+						slidesPerView: 1.4,
+						spaceBetween: 15,
+					},
+					760: {
+						slidesPerView: 2.2,
+						spaceBetween: 15,
+					},
+					960: {
+						slidesPerView: 2.8,
+						spaceBetween: 30,
+					},
+					1200: {
+						slidesPerView: 2.2,
+						spaceBetween: 30,
+					},
+					1600: {
+						slidesPerView: 2.8,
+						spaceBetween: 30,
+					},
+				},
+			});
+
+			var swiper = new Swiper(".mySwiper2", {
+				slidesPerView: 1,
+				loop: true,
+				pagination: {
+					el: ".swiper-pagination",
+				},
+				navigation: {
+					nextEl: ".swiper-button-next",
+					prevEl: ".swiper-button-prev",
+				},
+			});
+		});
+	</script>
+</th:block>
+</body>
+
+</html>
