@@ -14,7 +14,7 @@
 					<div class="col-lg-12">
 						<div class="form-panel">
 							<h4 class="mb"><i class="fa fa-angle-right"></i> 기본사항</h4>
-							<form class="form-horizontal style-form" method="get">
+							<div class="form-horizontal style-form">
 								<div class="form-group">
 									<label class="col-sm-2 col-sm-2 control-label">타이틀</label>
 									<div class="col-sm-10">
@@ -22,18 +22,25 @@
 									</div>
 								</div>
 								<div class="form-group">
+									<label class="col-sm-2 col-sm-2 control-label">대표이미지</label>
+									<div class="col-sm-10">
+										<input type="file" class="form-control" id="repImage">
+									</div>
+								</div>
+								<div class="form-group">
 									<label class="col-sm-2 col-sm-2 control-label">태그</label>
 									<div class="col-sm-10">
 										<select class="form-control" id="tag">
-											<option value="tag01">== 태그 ==</option>
-											<option value="tag02">== 태그 ==</option>
-											<option value="tag03">== 태그 ==</option>
-											<option value="tag04">== 태그 ==</option>
-											<option value="tag05">== 태그 ==</option>
+											<option value="インスタマーケティング">インスタマーケティング</option>
+											<option value="インスタアカウント管理">インスタアカウント管理</option>
+											<option value="SNSマーケティング">SNSマーケティング</option>
+											<option value="検索マーケティング">検索マーケティング</option>
+											<option value="コンテンツ制作">コンテンツ制作</option>
+											<option value="ディスプレイマーケティング">ディスプレイマーケティング</option>
 										</select>
 									</div>
 								</div>
-							</form>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -106,7 +113,9 @@
 		}
 
 		let editorInstance;
+		let uniqueValue = "";
 
+		// CKEditor 초기화
 		ClassicEditor
 			.create(document.querySelector('#editor'), {
 				plugins: [
@@ -128,13 +137,12 @@
 					],
 					styles: {
 						options: ['alignLeft', 'alignCenter', 'alignRight', 'full']
-					}
-				},
-				alignment: {
-					options: ['left', 'center', 'right']
-				},
-				table: {
-					contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+					},
+					resizeOptions: [
+						{name: 'resizeFull', value: '100', label: '100%'},
+						{name: 'resizeHalf', value: '50', label: '50%'},
+						{name: 'resizeQuarter', value: '25', label: '25%'}
+					]
 				},
 				extraPlugins: [CustomUploadAdapterPlugin]
 			})
@@ -145,19 +153,43 @@
 				console.error(error);
 			});
 
-		let uniqueValue;
+		// 모든 이미지를 멀티파트 폼 데이터로 전송하는 함수
+		async function uploadAllImages(images) {
+			const formData = new FormData();
 
-		async function uploadImage(imageBase64) {
-		    const response = await fetch('/admin/blog/image/upload', {
-		        method: 'POST',
-		        headers: { 'Content-Type': 'application/json' },
-		        body: JSON.stringify({ image: imageBase64 })
-		    });
-		    const data = await response.json();
-		    uniqueValue = data.uniqueValue; // 서버에서 반환된 UUID 저장
-		    return data.filePath;
+			// Base64 이미지를 Blob으로 변환하여 FormData에 추가
+			images.forEach((base64Image, index) => {
+				const blob = base64ToBlob(base64Image);
+				formData.append("files", blob, `image${index}.png`);
+			});
+
+			// 서버로 멀티파트 폼 데이터 전송
+			const response = await fetch('/admin/blog/images/upload', {
+				method: 'POST',
+				body: formData
+			});
+
+			const data = await response.json();
+			uniqueValue = data.uniqueValue;
+			return data.imagePaths;
 		}
 
+		// Base64 데이터를 Blob 객체로 변환하는 함수
+		function base64ToBlob(base64) {
+			const byteString = atob(base64.split(',')[1]);
+			const mimeType = base64.match(/data:(.*?);base64/)[1];
+			const arrayBuffer = new ArrayBuffer(byteString.length);
+			const uintArray = new Uint8Array(arrayBuffer);
+
+			for (let i = 0; i < byteString.length; i++) {
+				uintArray[i] = byteString.charCodeAt(i);
+			}
+
+			return new Blob([uintArray], {type: mimeType});
+		}
+
+
+		// 저장 버튼 클릭 이벤트 핸들러
 		document.getElementById('saveButton').addEventListener('click', async () => {
 			const title = document.getElementById('title').value.trim();
 			const tagSelect = document.getElementById('tag');
@@ -175,36 +207,71 @@
 
 			let editorData = editorInstance.getData();
 			const imgRegex = /<img[^>]+src="([^">]+)"/g;
-			const imagePromises = [];
+			const images = [];
 
-			editorData = editorData.replace(imgRegex, (match, src) => {
+			// 에디터 내 모든 이미지의 Base64 데이터를 추출
+			editorData.replace(imgRegex, (match, src) => {
 				if (src.startsWith('data:image')) {
-					imagePromises.push(uploadImage(src).then(filePath => {
-						editorData = editorData.replace(src, filePath);
-					}));
+					images.push(src);
 				}
-				return match;
 			});
+			console.log(images.length);
+			// 이미지 업로드가 필요한 경우
+			if (images.length > 0) {
+				try {
+					// 업로드된 이미지 경로 리스트를 받음
+					const imagePaths = await uploadAllImages(images);
 
-			await Promise.all(imagePromises);
+					if (imagePaths.length !== images.length) {
+						alert('이미지 업로드 중 일부 오류가 발생했습니다.');
+						return;
+					}
 
+					// 에디터 데이터에서 Base64 이미지를 업로드된 경로로 교체
+					imagePaths.forEach((filePath, index) => {
+						const base64Image = images[index];
+						editorData = editorData.replace(base64Image, filePath);
+					});
+				} catch (error) {
+					console.error('이미지 업로드 오류:', error);
+					alert('이미지 업로드에 실패했습니다.');
+					return;
+				}
+			}
+
+			// 서버에 데이터 저장
 			fetch('/admin/blog/save', {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({title, tag, content: editorData, uniqueValue })
+				body: JSON.stringify({title, tag, content: editorData, uniqueValue})
 			})
 				.then(response => {
 					if (response.ok) {
 						alert('저장이 완료되었습니다.');
+						location.href = "/admin/blogManager";
 					} else {
 						alert('저장에 실패했습니다.');
+						location.href = "/admin/blogManager";
 					}
 				})
 				.catch(error => {
 					console.error('저장 오류:', error);
 					alert('저장 중 문제가 발생했습니다.');
+					location.href = "/admin/blogManager";
 				});
 		});
+
+		// 반응형 이미지 CSS 추가
+		const style = document.createElement('style');
+		style.textContent = `
+        #editor img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+    `;
+		document.head.appendChild(style);
 	</script>
 </body>
 

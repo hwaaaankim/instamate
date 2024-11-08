@@ -25,7 +25,7 @@
 									<li><a href="#"><i class="uil uil-camera"></i>[[${content.clicks}]]CLICKS</a></li>
 								</ul>
 							</div>
-							<div class="entry-content mt-0">
+							<div class="entry-content mt-0" id="blog-content">
 								<p id="content-area" th:utext="${content.content}" class="content"></p>
 
 								<div class="clear"></div>
@@ -33,14 +33,31 @@
 						</div>
 
 						<div class="row text-center text-md-start justify-content-between my-5">
-							<div class="col-md-auto">
-								<a href="#" class="d-inline-flex align-items-center text-dark h-text-color"><i
-										class="uil uil-angle-left-b fs-3 me-1"></i><span>PREV</span></a>
+							<!-- PREV 버튼 -->
+							<div class="col-md-6 col-sm-6 col-6 col-xs-6">
+								<a th:if="${previousId != null}" th:href="@{/blogDetail/{id}(id=${previousId})}"
+									class="d-inline-flex align-items-center text-dark h-text-color">
+									<i class="uil uil-angle-left-b fs-3 me-1"></i><span>PREV</span>
+								</a>
+								<span th:if="${previousId == null}"
+									class="d-inline-flex align-items-center text-muted disabled">
+									<i class="uil uil-angle-left-b fs-3 me-1"></i><span>PREV</span>
+								</span>
 							</div>
-							<div class="col-md-auto">
-								<a href="#" class="d-inline-flex align-items-center text-dark h-text-color"><span>NEXT</span><i class="uil uil-angle-right-b fs-3 ms-1"></i></a>
+
+							<!-- NEXT 버튼 -->
+							<div class="col-md-6 col-sm-6 col-6 col-xs-6" style="text-align:right;">
+								<a th:if="${nextId != null}" th:href="@{/blogDetail/{id}(id=${nextId})}"
+									class="d-inline-flex align-items-center text-dark h-text-color">
+									<span>NEXT</span><i class="uil uil-angle-right-b fs-3 ms-1"></i>
+								</a>
+								<span th:if="${nextId == null}"
+									class="d-inline-flex align-items-center text-muted disabled">
+									<span>NEXT</span><i class="uil uil-angle-right-b fs-3 ms-1"></i>
+								</span>
 							</div>
 						</div>
+
 					</div>
 				</div>
 			</div>

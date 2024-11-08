@@ -2,12 +2,12 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <th:block th:replace="fragments/admin/common :: header('고객상세')"></th:block>
+  <th:block th:replace="fragments/administration/common :: header('고객상세')"></th:block>
 </head>
 
 <body>
   <section id="container">
-  	<th:block th:replace="fragments/admin/common :: side(${session['name']})"></th:block>
+  	<th:block th:replace="fragments/administration/common :: side(${session['name']})"></th:block>
 		<section id="main-content">
 			<section class="wrapper">
 				<h3><i class="fa fa-angle-right"></i> 고객상세</h3>
@@ -67,7 +67,7 @@
 			</section>
 		</section>
 	</section>
-  	<th:block th:replace="fragments/admin/common :: script"></th:block>
+  	<th:block th:replace="fragments/administration/common :: script"></th:block>
 	<script th:inline="javascript">
 		var client = /*[[${client}]]*/ 'default';
 		$(function(){
@@ -79,7 +79,7 @@
 	function deleteClient(id){
 		var result = confirm('해당 고객을 삭제 하시겠습니까?');
 		if(result){
-			location.href='/admin/japanClientDelete/'+id;
+			location.href='/administration/japanClientDelete/'+id;
 		}
 	}
 	function check(){

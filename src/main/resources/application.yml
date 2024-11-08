@@ -2,8 +2,7 @@ spring:
   application:
     name: InstaMate
   profiles:
-    active: test
-    
+    active: prod
 server:
   port: 8080
   

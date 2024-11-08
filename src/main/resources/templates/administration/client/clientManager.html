@@ -97,14 +97,14 @@
 												th:classappend="${1 == clients.pageable.pageNumber+1} ? 'disabled'">
 												<a class="page-link" href="#"
 												th:href="@{/admin/clientManager(page=0, size=${param.size}, searchType=${param.searchType}, searchWord=${param.searchWord}, startDate=${param.startDate}
-												,endDate=${param.endDate}, searchSubject=${param.searchSubject})}"
+												,endDate=${param.endDate})}"
 												tabindex="-1" aria-disabled="true">First</a>
 											</li>
 											<li class="page-item"
 												th:classappend="${1 == clients.pageable.pageNumber+1} ? 'disabled'">
 												<a class="page-link" href="#"
 												th:href="@{/admin/clientManager(page=${clients.pageable.pageNumber - 1}, size=${param.size}, searchType=${param.searchType}, searchWord=${param.searchWord}, startDate=${param.startDate}
-												,endDate=${param.endDate}, searchSubject=${param.searchSubject})}"
+												,endDate=${param.endDate})}"
 												tabindex="-1" aria-disabled="true">Previous</a>
 											</li>
 											<li class="page-item"
@@ -112,19 +112,19 @@
 												th:each="i : ${#numbers.sequence(startPage, endPage)}">
 												<a	class="page-link" href="#" th:text=${i}
 												th:href="@{/admin/clientManager(page=${i-1}, size=${param.size}, searchType=${param.searchType}, searchWord=${param.searchWord}, startDate=${param.startDate}
-												,endDate=${param.endDate}, searchSubject=${param.searchSubject})}">1</a>
+												,endDate=${param.endDate})}">1</a>
 											</li>
 											<li class="page-item"
 												th:classappend="${clients.totalPages == clients.pageable.pageNumber + 1} ? 'disabled'">
 												<a class="page-link" href="#"
 												th:href="@{/admin/clientManager(page=${clients.pageable.pageNumber + 1}, size=${param.size}, searchType=${param.searchType}, searchWord=${param.searchWord}, startDate=${param.startDate}
-												,endDate=${param.endDate}, searchSubject=${param.searchSubject})}">Next</a>
+												,endDate=${param.endDate})}">Next</a>
 											</li>
 											<li class="page-item"
 												th:classappend="${clients.totalPages == clients.pageable.pageNumber + 1} ? 'disabled'">
 												<a class="page-link" href="#"
 												th:href="@{/admin/clientManager(page=${clients.totalPages-1}, size=${param.size}, searchType=${param.searchType}, searchWord=${param.searchWord}, startDate=${param.startDate}
-												,endDate=${param.endDate}, searchSubject=${param.searchSubject})}">Last</a>
+												,endDate=${param.endDate})}">Last</a>
 											</li>
 										</ul>
 									</nav>

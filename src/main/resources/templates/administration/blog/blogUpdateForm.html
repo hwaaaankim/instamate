@@ -167,6 +167,25 @@
 			return data.filePath;
 		}
 
+		function base64ToBlob(base64) {
+			try {
+				const byteString = atob(base64.split(',')[1]);
+				const mimeType = base64.match(/data:(.*?);base64/)[1];
+				const arrayBuffer = new ArrayBuffer(byteString.length);
+				const uintArray = new Uint8Array(arrayBuffer);
+
+				for (let i = 0; i < byteString.length; i++) {
+					uintArray[i] = byteString.charCodeAt(i);
+				}
+
+				return new Blob([uintArray], {type: mimeType});
+			} catch (error) {
+				console.error("Invalid Base64 Data:", base64);
+				throw new Error("Base64 데이터 디코딩 실패");
+			}
+		}
+
+
 		document.getElementById('updateButton').addEventListener('click', async () => {
 			const title = document.getElementById('title').value.trim();
 			const tagSelect = document.getElementById('tag');
@@ -183,30 +202,76 @@
 			}
 
 			let editorData = editorInstance.getData();
-			const imgRegex = /<img[^>]+src="([^">]+)"/g;
-			const imagePromises = [];
+			const imgRegex = /<img[^>]*src="([^">]+)"/g;
+			const base64Images = [];
+			const serverImages = [];
+			const serverImageNames = new Set();
 
-			// 기존 이미지 삭제를 위한 API 호출
-			await fetch(`/admin/blog/delete-images/${blogId}`, {method: 'DELETE'})
-				.then(response => {
-					if (!response.ok) throw new Error('기존 이미지 삭제 실패');
-				})
-				.catch(error => console.error(error));
-
-			// 새로 등록된 이미지 서버로 업로드
-			editorData = editorData.replace(imgRegex, (match, src) => {
+			// 1. 현재 편집기 내의 이미지 src 추출 및 구분
+			let match;
+			while ((match = imgRegex.exec(editorData)) !== null) {
+				const src = match[1];
 				if (src.startsWith('data:image')) {
-					imagePromises.push(uploadImage(src).then(filePath => {
-						editorData = editorData.replace(src, filePath);
-					}));
+					base64Images.push(src);
+				} else if (src.startsWith('/administration/upload/')) {
+					serverImages.push(src);
+					// 서버 이미지의 파일명 추출
+					const imageName = src.split('/').pop();
+					serverImageNames.add(imageName);
 				}
-				return match;
+			}
+
+			console.log("Base64 Images:", base64Images);
+			console.log("Server Images:", serverImages);
+
+			// 2. UUID 조회 및 편집기에 없는 이미지 삭제 요청
+			const response = await fetch(`/admin/blog/delete-unused-images/${blogId}`, {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({serverImageNames: Array.from(serverImageNames)})
 			});
 
-			await Promise.all(imagePromises);
+			if (!response.ok) {
+				alert('이미지 삭제 실패');
+				return;
+			}
 
-			// 수정된 컨텐츠 업데이트
-			fetch(`/admin/blog/update/${blogId}`, {
+			const uniqueValue = await response.text();
+
+			// 3. 새로 등록된 Base64 이미지 업로드
+			if(base64Images.length>0){
+				
+				const formData = new FormData();
+				base64Images.forEach((base64Image, index) => {
+					try {
+						const blob = base64ToBlob(base64Image);
+						formData.append("files", blob, `image${index}.png`);
+					} catch (error) {
+						console.error("Blob 변환 오류:", error);
+					}
+				});
+				
+				const uploadResponse = await fetch(`/admin/blog/upload-updated-images/${uniqueValue}`, {
+					method: 'POST',
+					body: formData
+				});
+	
+				if (!uploadResponse.ok) {
+					alert('이미지 업로드 실패');
+					return;
+				}
+	
+				const imagePaths = await uploadResponse.json();
+	
+				// 4. 에디터 데이터에서 Base64 이미지를 업로드된 경로로 교체
+				imagePaths.forEach((filePath, index) => {
+					const base64Image = base64Images[index];
+					editorData = editorData.replace(base64Image, filePath);
+				});
+			}
+
+			// 5. 수정된 콘텐츠 업데이트 요청
+			await fetch(`/admin/blog/update/${blogId}`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({title, tag, content: editorData})
@@ -214,6 +279,7 @@
 				.then(response => {
 					if (response.ok) {
 						alert('수정이 완료되었습니다.');
+						location.href = "/admin/blogManager";
 					} else {
 						alert('수정에 실패했습니다.');
 					}
@@ -223,6 +289,8 @@
 					alert('수정 중 문제가 발생했습니다.');
 				});
 		});
+
+
 
 	</script>
 </body>

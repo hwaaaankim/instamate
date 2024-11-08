@@ -1,5 +1,8 @@
 package com.dev.InstaMate.controller;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dev.InstaMate.model.EditorContent;
 import com.dev.InstaMate.service.EditorContentService;
@@ -48,7 +53,7 @@ public class EditorController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<String> updateContent(
+    public ResponseEntity<Map<String, Object>> updateContent(
             @PathVariable Long id,
             @RequestBody Map<String, String> payload) {
 
@@ -56,9 +61,36 @@ public class EditorController {
         String tag = payload.get("tag");
         String content = payload.get("content");
 
+        // UUID 조회
+        String uniqueValue = editorContentService.getUniqueValueById(id);
+
+        // 업데이트된 콘텐츠 저장
         editorContentService.updateContent(id, title, tag, content);
 
-        return ResponseEntity.ok("수정이 완료되었습니다.");
+        // UUID와 빈 이미지 경로 리스트 반환
+        Map<String, Object> response = new HashMap<>();
+        response.put("uniqueValue", uniqueValue);
+        response.put("message", "수정이 완료되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/delete-unused-images/{id}")
+    public ResponseEntity<String> deleteUnusedImages(@PathVariable Long id, @RequestBody Map<String, List<String>> payload) {
+        List<String> usedImageNames = payload.get("serverImageNames");
+        String uniqueValue = editorContentService.getUniqueValueById(id);
+        editorContentService.deleteUnusedImages(uniqueValue, usedImageNames);
+        return ResponseEntity.ok(uniqueValue);
+    }
+
+    
+    @PostMapping("/upload-updated-images/{uuid}")
+    public ResponseEntity<List<String>> uploadUpdatedImages(
+            @PathVariable String uuid,
+            @RequestParam("files") List<MultipartFile> files) {
+
+        List<String> imagePaths = imageUploadService.uploadImagesWithUUID(uuid, files);
+        return ResponseEntity.ok(imagePaths);
     }
     
     @GetMapping("/edit/{id}")
@@ -87,10 +119,20 @@ public class EditorController {
     }
     
     // 이미지 업로드 요청 처리
-    @PostMapping("/image/upload")
-    public ResponseEntity<Map<String, String>> uploadImage(@RequestBody Map<String, String> request) {
-        String base64Image = request.get("image");
-        Map<String, String> response = imageUploadService.uploadImage(base64Image);
-        return ResponseEntity.ok(response);
+    @PostMapping("/images/upload")
+    public ResponseEntity<Map<String, Object>> uploadImages(@RequestParam("files") List<MultipartFile> files) {
+        // 파일 목록이 비어있지 않을 경우 처리
+        if (files != null && !files.isEmpty()) {
+            // 한 번의 서비스 호출로 모든 이미지를 처리
+            Map<String, Object> response = imageUploadService.uploadImages(files);
+            return ResponseEntity.ok(response);
+        } else {
+            // 파일 목록이 없는 경우, 빈 응답 반환
+            Map<String, Object> emptyResponse = new HashMap<>();
+            emptyResponse.put("uniqueValue", "");
+            emptyResponse.put("imagePaths", Collections.emptyList());
+            return ResponseEntity.ok(emptyResponse);
+        }
     }
+
 }

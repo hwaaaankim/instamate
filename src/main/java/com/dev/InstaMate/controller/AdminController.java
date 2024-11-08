@@ -40,7 +40,6 @@ public class AdminController {
 			RedirectAttributes redirect,
 			@PageableDefault(size = 10) Pageable pageable, 
 			@RequestParam(required = false) String searchType,
-			@RequestParam(required = false) String searchSubject, 
 			@RequestParam(required = false) String searchWord,
 			@RequestParam(required = false) String startDate, 
 			@RequestParam(required = false) String endDate
@@ -77,7 +76,6 @@ public class AdminController {
 		model.addAttribute("endPage", endPage);
 		model.addAttribute("clients", clients);
 		model.addAttribute("searchType", searchType);
-		model.addAttribute("searchSubject", searchSubject);
 		return "administration/client/clientManager";
 	}
 	

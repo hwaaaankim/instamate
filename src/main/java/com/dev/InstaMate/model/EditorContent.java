@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -42,4 +43,10 @@ public class EditorContent {
     
     @Column(name="EDITOR_UNIQUE_VALUE")
     private String value;
+    
+    @Column(name="EDITOR_REP")
+    private String imageUrl;
+    
+    @Transient
+    private String comment;
 }
